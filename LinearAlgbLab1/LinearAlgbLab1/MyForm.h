@@ -381,17 +381,25 @@ namespace LinearAlgbLab1 {
 
 	private: System::Void addition_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-		Matrix^ matrix1 = gcnew Matrix("matrix1.txt");
-		Matrix^ matrix2 = gcnew Matrix("matrix2.txt");		
-		Matrix^ sumMatrix = matrix1 + matrix2;
-		String^ resultMatrix = sumMatrix->ToString();
+		try
+		{
+			Matrix^ matrix1 = gcnew Matrix("matrix1.txt");
+			Matrix^ matrix2 = gcnew Matrix("matrix2.txt");
+			Matrix^ sumMatrix = matrix1 + matrix2;
+			String^ resultMatrix = sumMatrix->ToString();
 
-		// Отримуємо поточний текст у richTextBoxResult
-		String^ currentText = richTextBoxResult->Text;
+			// Отримуємо поточний текст у richTextBoxResult
+			String^ currentText = richTextBoxResult->Text;
 
-		// Додаємо рядок з результатом матриці до поточного тексту
-		richTextBoxResult->Text = currentText + "\nResult Matrix of addition:\n" + resultMatrix;
-		sumMatrix->WriteToFile("SumMatrix.txt");
+			// Додаємо рядок з результатом матриці до поточного тексту
+			richTextBoxResult->Text = currentText + "\nResult Matrix of addition:\n" + resultMatrix;
+			sumMatrix->WriteToFile("SumMatrix.txt");
+		}
+		catch (Exception^ ex)
+		{
+			// Виведення повідомлення про помилку у текстбокс
+			richTextBoxResult->Text = "Error: " + ex->Message;
+		}
 	}
 
 	private: System::Void norm_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -408,6 +416,21 @@ namespace LinearAlgbLab1 {
 
 	private: System::Void generate_matrix_Click(System::Object^ sender, System::EventArgs^ e)
 	{
+		bool isError = false;
+		if (String::IsNullOrEmpty(textBoxRows1->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxColls1->Text))	isError = true;
+		if (String::IsNullOrEmpty(textBoxRows2->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxColls2->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxMin1->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxMax1->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxMin2->Text))	isError = true; 
+		if (String::IsNullOrEmpty(textBoxMax2->Text))	isError = true; 
+		if (isError)
+		{
+			richTextBoxResult->Text = " you must specify the rows, columns, min number and max number";
+			return;
+		}
+			
 		int rows1 = System::Convert::ToInt32(textBoxRows1->Text);
 		int cols1 = System::Convert::ToInt32(textBoxColls1->Text);
 		int rows2 = System::Convert::ToInt32(textBoxRows2->Text);
@@ -416,7 +439,12 @@ namespace LinearAlgbLab1 {
 		double max1 = System::Convert::ToDouble(textBoxMax1->Text);
 		double min2 = System::Convert::ToDouble(textBoxMin2->Text);
 		double max2 = System::Convert::ToDouble(textBoxMax2->Text);
-
+		
+		if (min1 > max1 || min2 > max2)
+		{
+			richTextBoxResult->Text = "Error: your min number is bigger than max number, try again";
+			return;
+		}
 		Matrix^ matrix1 = gcnew Matrix(rows1, cols1);
 		Matrix^ matrix2 = gcnew Matrix(rows2, cols2);
 

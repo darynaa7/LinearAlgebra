@@ -79,8 +79,7 @@ void Matrix::WriteToFile(String^ filename)
  {
     if (a->rows != b->rows || a->cols != b->cols) 
     {
-        Console::WriteLine("Matrix dimensions mismatch for addition");
-        return gcnew Matrix();
+        throw gcnew System::Exception("Matrix dimensions mismatch for addition");
     }
     Matrix^ result = gcnew Matrix(a->rows, a->cols);
     for (int i = 0; i < a->rows; i++) 
@@ -97,8 +96,7 @@ void Matrix::WriteToFile(String^ filename)
  {
      if (a->rows != b->rows || a->cols != b->cols)
      {
-         Console::WriteLine("Matrix dimensions mismatch for subtraction");
-         return gcnew Matrix();
+         throw gcnew System::Exception("Matrix dimensions mismatch for subtraction");
      }
      Matrix^ result = gcnew Matrix(a->rows, a->cols);
      for (int i = 0; i < a->rows; i++)
@@ -114,8 +112,7 @@ void Matrix::WriteToFile(String^ filename)
 Matrix^ Matrix::operator*(Matrix^ a, Matrix^ b)
  {
      if (a->cols != b->rows) {
-         Console::WriteLine("Matrix dimensions mismatch for multiplication");
-         return gcnew Matrix();
+         throw gcnew System::Exception("Matrix dimensions mismatch for multltiplication");
      }
      Matrix^ result = gcnew Matrix(a->rows, b->cols);
      for (int i = 0; i < a->rows; i++) {
