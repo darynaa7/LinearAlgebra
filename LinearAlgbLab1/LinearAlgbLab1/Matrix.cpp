@@ -1,6 +1,35 @@
 #include "Matrix.h"
 #include <cassert>
 
+
+Matrix::Matrix(int nrows, int ncols) : rows(nrows), cols(ncols) 
+{
+    data = gcnew array<array<double>^>(nrows);
+    for (int i = 0; i < nrows; i++)
+    {
+        data[i] = gcnew array<double>(ncols);
+        for (int j = 0; j < ncols; j++)
+        {
+            data[i][j] = 0.0;
+        }
+    }
+}
+
+Matrix::Matrix(const Matrix% other)
+{
+    rows = other.rows;
+    cols = other.cols;
+    data = gcnew array<array<double>^>(rows);
+    for (int i = 0; i < rows; i++)
+    {
+        data[i] = gcnew array<double>(cols);
+        for (int j = 0; j < cols; j++)
+        {
+            data[i][j] = other.data[i][j];
+        }
+    }
+}
+
 Matrix::Matrix(String^ filename) 
 {
     StreamReader^ sr = gcnew StreamReader(filename);
@@ -22,32 +51,20 @@ Matrix::Matrix(String^ filename)
     sr->Close();
 }
 
-Matrix::Matrix(const Matrix% other) 
+void Matrix::Randomize1(double min, double max)
 {
-    rows = other.rows;
-    cols = other.cols;
-    data = gcnew array<array<double>^>(rows);
+    srand(time(0));
     for (int i = 0; i < rows; i++)
     {
-        data[i] = gcnew array<double>(cols);
         for (int j = 0; j < cols; j++)
         {
-            data[i][j] = other.data[i][j];
+            double randomValue = min + (max - min) * rand() / (RAND_MAX + 1.0);
+            double roundedValue = round(randomValue * 10) / 10; 
+            data[i][j] = roundedValue;
         }
     }
 }
 
-void Matrix::Randomize1(double min, double max) 
-{
-    srand(time(0)); 
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            data[i][j] = min + (max - min) * rand() / (RAND_MAX + 1.0);
-        }
-    }
-}
 void Matrix::Randomize2(double min, double max)
 {
     System::Random^ rnd = gcnew System::Random();
@@ -55,7 +72,9 @@ void Matrix::Randomize2(double min, double max)
     {
         for (int j = 0; j < cols; j++)
         {
-            data[i][j] = min + (max - min) * rnd->NextDouble();
+            double randomValue = min + (max - min) * rnd->NextDouble();
+            double roundedValue = Math::Round(randomValue, 1); 
+            data[i][j] = roundedValue;
         }
     }
 }
@@ -126,6 +145,34 @@ Matrix^ Matrix::operator*(Matrix^ a, Matrix^ b)
      }
      return result;
  }
+
+String^ Matrix::ToString()
+{
+    String^ result = "";
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            result += data[i][j] + " ";
+        }
+        result += "\n";
+    }
+    return result;
+}
+
+String^ Matrix::ToStringX()
+{
+    String^ result = "";
+    for (int i = 0; i < rows; i++)
+    {
+        result += "\n x[" + (i + 1) + "] = " + data[i][0].ToString("F10") + " \n ";
+      
+    }
+    return result;
+}
+
+
+
 
  double Matrix::MaximumAbsoluteNorm()
  {
